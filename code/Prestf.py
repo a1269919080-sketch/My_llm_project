@@ -1,3 +1,6 @@
+import os
+os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com' # 使用国内镜像
+
 import torch, transformers
 from transformers import AutoTokenizer, AutoModelForCausalLM, TextStreamer
 from dataclasses import dataclass, field
@@ -24,11 +27,11 @@ tokenizer_name = model_args.tokenizer_name if model_args.tokenizer_name is not N
 model = AutoModelForCausalLM.from_pretrained(
     model_args.model_name,
     device_map="auto",
-    torch_dtype=torch.bfloat16
+    dtype=torch.bfloat16
 )
 tokenizer = AutoTokenizer.from_pretrained(
     tokenizer_name,
-    use_fast=True,
+    use_fast=False,
 )
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
@@ -40,6 +43,11 @@ print("="*50 + "\n")
 
 while True:
    user_input = input("\n你: ") 
+   user_input = str(user_input)
+   user_input = user_input.encode(
+    "utf-8",
+    errors="ignore"
+   ).decode("utf-8")
    if user_input.strip().lower() in ['quit', 'exit', '退出']:
         print("对话结束。")
         break 
@@ -54,7 +62,10 @@ while True:
         tokenize=False, 
         add_generation_prompt=True
    )
-   inputs = tokenizer(prompt, return_tensors="pt", add_special_tokens=False).to(model.device)
+   print(type(prompt))
+   print(prompt)
+   inputs = tokenizer(prompt, return_tensors="pt")
+   inputs = {k: v.to(model.device) for k, v in inputs.items()}
    print("Gemma: ", end="")
    with torch.no_grad(): # 科研推理时一定要加这句，节省显存
         outputs = model.generate(
