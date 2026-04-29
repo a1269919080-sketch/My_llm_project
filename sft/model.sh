@@ -1,0 +1,24 @@
+python model.py \
+ --model_name Qwen/Qwen2.5-1.5B \
+ --tokenizer_name Qwen/Qwen2.5-1.5B \
+ --dataset_name HuggingFaceH4/ultrafeedback_binarized \
+ --load_from_json False \
+ --subset "" \
+ --output_dir "./output/sft" \
+ --num_train_epochs 3 \
+ --per_device_train_batch_size 1 \
+ --per_device_eval_batch_size 2 \
+ --gradient_accumulation_steps 16 \
+ --learning_rate 2e-5 \
+ --lr_scheduler_type "cosine" \
+ --warmup_steps 0.03 \
+ --weight_decay 0.01 \
+ --seq_length 128 \
+ --fp16 True \
+ --logging_steps 10 \
+ --save_strategy "steps" \
+ --save_steps 500 \
+ --save_total_limit 3 \
+ --dataloader_num_workers 4 \
+ --remove_unused_columns False \
+ --report_to "none"
