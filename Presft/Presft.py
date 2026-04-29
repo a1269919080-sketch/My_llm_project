@@ -21,7 +21,7 @@ class ModelArguments:
             "help": "The tokenizer for your model, if left empty will use the default for your model"
         }
     )
-parser = transformers.HfArgumentParser(ModelArguments)
+parser = transformers.HfArgumentParser(ModelArguments)#把dataclass定义的参数，自动变成命令行参数解析器
 model_args = parser.parse_args_into_dataclasses()[0]
 tokenizer_name = model_args.tokenizer_name if model_args.tokenizer_name is not None else model_args.model_name
 model = AutoModelForCausalLM.from_pretrained(
@@ -33,6 +33,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     tokenizer_name,
     use_fast=False,
 )
+
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
 chat_history = []
@@ -78,4 +79,4 @@ while True:
    input_length = inputs['input_ids'].shape[1]
    generated_tokens = outputs[0][input_length:]
    model_response = tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
-   chat_history.append({"role": "model", "content": model_response})
+   chat_history.append({"role": "assistant", "content": model_response})

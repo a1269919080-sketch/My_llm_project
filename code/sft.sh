@@ -1,1 +1,0 @@
-python sft.py \
