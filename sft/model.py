@@ -3,6 +3,7 @@ os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com' # 使用国内镜像
 from dataclasses import dataclass, field
 from typing import Optional,Sequence,Dict
 import transformers
+from peft import LoraConfig, get_peft_model, TaskType
 from transformers import(
     AutoTokenizer,
     AutoModelForCausalLM,
@@ -52,7 +53,18 @@ tokenizer = AutoTokenizer.from_pretrained(
     use_fast = True
 )
 tokenizer.pad_token = tokenizer.eos_token
-model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, dtype=torch.float32)
+model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, dtype=torch.float16, device_map="auto")
+
+# LoRA配置
+lora_config = LoraConfig(
+    r=8,                         # 秩（越大越强，但更耗显存）
+    lora_alpha=16,
+    target_modules=["q_proj", "v_proj"],  # ⭐关键：Qwen必须写这个
+    lora_dropout=0.05,
+    bias="none",
+    task_type=TaskType.CAUSAL_LM
+)
+model = get_peft_model(model, lora_config)
 #--------------------------------------------------------------------------------
 #数据处理函数
 IGNORE_INDEX=-100
