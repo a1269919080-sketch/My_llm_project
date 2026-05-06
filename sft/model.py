@@ -53,7 +53,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     use_fast = True
 )
 tokenizer.pad_token = tokenizer.eos_token
-model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, dtype=torch.float16, device_map="auto")
+model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, torch_dtype=torch.float32, device_map="auto")
 
 # LoRA配置
 lora_config = LoraConfig(
@@ -65,9 +65,10 @@ lora_config = LoraConfig(
     task_type=TaskType.CAUSAL_LM
 )
 model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
 #--------------------------------------------------------------------------------
 #数据处理函数
-IGNORE_INDEX=-100
+IGNORE_INDEX= -100
 def preprocess_function(examples):
     all_input_ids = []
     all_labels = []
@@ -97,6 +98,7 @@ def preprocess_function(examples):
         all_input_ids.append(input_ids)
         all_labels.append(labels)
     result = {'input_ids': all_input_ids, 'labels': all_labels}
+
     return result
 
 #--------------------------------------------------------------------------------
@@ -136,7 +138,7 @@ class DataCollatorForSupervisedDataset(object):
     
 trainer = Trainer(
     model=model,
-    processing_class=tokenizer,
+    tokenizer=tokenizer,
     args=training_args,
     train_dataset=dataset,
     data_collator=DataCollatorForSupervisedDataset(tokenizer=tokenizer)
