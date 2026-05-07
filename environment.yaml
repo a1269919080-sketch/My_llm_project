@@ -1,6 +1,7 @@
 name: rlaif_hch
 channels:
-  - conda-forge
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+  - defaults  
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_gnu
@@ -25,6 +26,7 @@ dependencies:
   - wheel=0.43.0=pyhd8ed1ab_1
   - xz=5.2.6=h166bdaf_0
   - pip:
+    - --index-url https://pypi.tuna.tsinghua.edu.cn/simple
     - accelerate==0.28.0
     - aiohttp==3.9.3
     - aiosignal==1.3.1

@@ -27,7 +27,7 @@ tokenizer_name = model_args.tokenizer_name if model_args.tokenizer_name is not N
 model = AutoModelForCausalLM.from_pretrained(
     model_args.model_name,
     device_map="auto",
-    dtype=torch.bfloat16
+    torch_dtype=torch.bfloat16
 )
 tokenizer = AutoTokenizer.from_pretrained(
     tokenizer_name,

@@ -22,5 +22,5 @@ python model.py \
  --remove_unused_columns True \
  --report_to "none" \
  --fp16 False \
- --bf16 False \
+ --bf16 True \
 

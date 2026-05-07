@@ -53,7 +53,7 @@ tokenizer = AutoTokenizer.from_pretrained(
     use_fast = True
 )
 tokenizer.pad_token = tokenizer.eos_token
-model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, torch_dtype=torch.float32, device_map="auto")
+model  = AutoModelForCausalLM.from_pretrained(model_args.model_name, torch_dtype=torch.bfloat16).cuda()
 
 # LoRA配置
 lora_config = LoraConfig(
